@@ -1,0 +1,16 @@
+feature,importance
+win_glazing_high_perf,0.30639896
+wall_insulation_none,0.19997784
+wall_measured_u_value,0.07617691
+heat_sys_portable_or_none,0.069652915
+wall_unknown,0.042338263
+heat_energy_electric,0.03244005
+heat_sys_room_heaters,0.02496254
+roof_insulation_thickness_mm,0.017389895
+heat_sys_heat_pump,0.016332451
+win_extent_full,0.013525392
+prop_type_flat,0.012310197
+roof_insulation_none,0.011793089
+heat_sys_boiler,0.010731203
+heat_sys_room_heater,0.010038432
+construction_age_unknown,0.0087026935

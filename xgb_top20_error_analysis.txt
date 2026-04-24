@@ -1,0 +1,19 @@
+XGBoost residual analysis
+Rows analyzed: 53294
+MAE: 3.6591
+RMSE: 5.4099
+Mean residual (y_true - y_pred): 0.0127
+Median residual: 0.3750
+
+Top 20 largest errors overview
+Mean absolute error among top 20: 43.6713
+Max absolute error among top 20: 66.1254
+Building age range in top 20: 0.00 to 176.00
+Floor area range in top 20: 16.00 to 135.00
+Among top 20 errors: 2 underpredictions, 18 overpredictions
+
+feature_building_age quartiles all rows: Q25=24.00, Q50=59.00, Q75=84.50
+feature_building_age quartiles top20: Q25=33.25, Q50=69.25, Q75=116.88
+
+TOTAL_FLOOR_AREA quartiles all rows: Q25=57.00, Q50=71.00, Q75=87.00
+TOTAL_FLOOR_AREA quartiles top20: Q25=43.00, Q50=66.44, Q75=89.50
