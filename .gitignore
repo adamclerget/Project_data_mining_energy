@@ -1,0 +1,38 @@
+# --- Environnements Virtuels ---
+# C'est ici que sont stockés les 10k+ fichiers des bibliothèques installées
+venv/
+.venv/
+env/
+ENV/
+bin/
+lib/
+include/
+
+# --- Cache Python ---
+# Fichiers générés lors de l'exécution du code
+**/__pycache__/
+*.py[cod]
+*$py.class
+
+# --- Distribution / Build ---
+# Si tu crées des packages
+dist/
+build/
+*.egg-info/
+
+# --- Tests et Couverture ---
+.pytest_cache/
+.tox/
+.coverage
+htmlcov/
+
+# --- Variables d'environnement ---
+# Pour ne pas partager tes mots de passe ou clés API
+.env
+
+# --- OS & IDE ---
+.DS_Store
+.vscode/
+.idea/
+.project/
+.iml
