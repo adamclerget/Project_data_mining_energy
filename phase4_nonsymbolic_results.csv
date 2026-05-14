@@ -1,0 +1,9 @@
+Model,CV RMSE,CV MAE
+Random Forest (default),5.693,3.758
+Random Forest (tuned),5.416,3.616
+XGBoost (default),5.564,3.822
+XGBoost (tuned),5.354,3.6
+LightGBM (default),5.77,4.013
+LightGBM (tuned),5.361,3.624
+MLP (default),5.871,4.052
+MLP (tuned),5.762,3.946
