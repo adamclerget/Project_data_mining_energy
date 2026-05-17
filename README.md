@@ -2,200 +2,271 @@
 
 ## 1. Project Overview
 
-This project investigates the use of machine learning to predict building energy efficiency as a regression task. The objective is to estimate a continuous building energy performance score from structural, thermal, and system-related characteristics derived from Energy Performance Certificate (EPC) data.
+This project investigates machine learning approaches for predicting **building energy efficiency** as a **regression task**. The objective is to estimate a continuous EPC-related energy performance score from structural, thermal, and system-level building characteristics derived from Energy Performance Certificate data.
 
-The project has strong practical relevance for energy optimization, public policy design, and real-estate decision making. Accurate prediction of building energy performance can help identify inefficient properties, support retrofit prioritization, and provide useful insights for sustainability planning.
+The project has clear practical value for:
+
+- energy optimization and retrofit targeting
+- policy support for improving inefficient housing stock
+- sustainability analysis
+- real-estate and housing-market insight generation
 
 ---
 
 ## 2. Dataset
 
-The project is based on an EPC dataset for **Manchester (UK)**, processed into a modeling-ready tabular dataset.
+The project uses a processed EPC dataset for **Manchester (UK)**.
 
-After cleaning, deduplication, feature engineering, and leakage prevention, the final dataset contains approximately **266,000 observations**.
+After cleaning, deduplication, leakage prevention, and feature engineering, the final modeling dataset contains approximately **266,000 observations**.
 
-The features describe building characteristics that influence energy performance, including:
+Main feature groups include:
 
-- Estimated building age
-- Heating system type and energy source
-- Roof and wall insulation indicators
-- Glazing quality and window extent
-- Total floor area
-- Property type and building form
+- `construction_year_estimated`
+- `feature_building_age`
+- heating system type and fuel source
+- roof insulation indicators and thickness
+- wall insulation and wall type indicators
+- glazing quality and window extent
+- total floor area
+- property type and building form
+
+Source files include:
+
+- `manchester_epc_legal.parquet`
+- `manchester_epc_prepped.parquet`
+- `manchester_epc_phase3_final.parquet`
 
 ---
 
 ## 3. Problem Definition
 
-The main task is a **regression problem**, where the goal is to predict a continuous building energy efficiency score.
+The main task is **regression**, with the goal of predicting a continuous **current energy efficiency score** from physical building attributes.
 
-The target variable represents energy performance in EPC data (linked to kWh/m²/year consumption levels).
-
-While a classification framing (efficient vs inefficient) is possible, this project focuses on regression to preserve detailed information and allow more precise modeling.
+While an auxiliary binary framing (`target_is_efficient`) exists for interpretation and threshold-based discussion, the core project focuses on regression because it preserves finer-grained information and supports more precise comparison between models.
 
 ---
 
 ## 4. Methodology / Pipeline
 
-The project follows a standard end-to-end data mining workflow:
+The workflow follows a standard data mining and machine learning pipeline:
 
-1. **Data preprocessing**  
-   Raw EPC data is cleaned, categorical text fields are parsed, and relevant variables are extracted.
+1. **Data preparation**  
+   Raw EPC records are cleaned and relevant variables are selected.
 
 2. **Feature engineering**  
-   Domain-informed features are created, including building age estimation, insulation indicators, heating system grouping, and structural attributes.
+   Domain-informed variables are created, especially around age, insulation, glazing, heating systems, and dwelling structure.
 
-3. **Train/Test Split**  
-   A holdout test set is created using an 80/20 split (`test_size = 0.2`, `random_state = 42`) to evaluate generalization performance.
+3. **Train/test split**  
+   A holdout test split is created with `test_size = 0.2` and `random_state = 42`.
 
-4. **Modeling**  
-   Both interpretable and non-symbolic models are trained and compared.
+4. **Model training and tuning**  
+   Both interpretable and non-symbolic models are trained and tuned.
+
+5. **Downstream evaluation and explainability**  
+   The final model set is evaluated using holdout metrics, 10-fold cross-validation, residual analysis, SHAP, feature importance, and robustness checks for older buildings.
 
 ---
 
 ## 5. Models Used
 
-The following models were evaluated:
+The final comparison includes:
 
-- **DummyRegressor** (baseline)
-- **Decision Tree** (interpretable / symbolic model)
-- **Random Forest** (ensemble baseline, included in evaluation results)
-- **XGBoost** (best-performing model)
-- **LightGBM** (high-performance alternative)
+- **DummyRegressor** baseline
+- **Decision Tree** as the symbolic / interpretable model
+- **Random Forest**
+- **XGBoost**
+- **LightGBM**
+- **MLPRegressor** neural network
 
-Hyperparameters were tuned using grid search and cross-validation. Example tuning dimensions include:
-
-- Tree depth (`max_depth`)
-- Minimum samples per leaf (`min_samples_leaf`)
-- Learning rate (boosting models)
-- Number of estimators
+The strongest final models are the boosted tree methods, with XGBoost achieving the best overall performance.
 
 ---
 
-## 6. Evaluation Setup
+## 6. Final Evaluation Setup
 
-Model performance was evaluated using:
+The repository now reflects the **latest iteration** of the project, including retraining after feature updates and explicit analysis of older-building prediction difficulty.
 
-- **Train/Test split (holdout evaluation)**
-- **5-fold cross-validation**
+Final evaluation uses:
+
+- **Holdout test evaluation**
+- **10-fold cross-validation**
 - Metrics:
-  - RMSE (Root Mean Squared Error)
-  - MAE (Mean Absolute Error)
+  - **RMSE**
+  - **MAE**
 
-Stratification was not applied, as the task is a continuous regression problem. A cost matrix was also not used, as it is more relevant for classification tasks.
+Additional downstream evaluation includes:
 
-Evaluation was conducted systematically across all models using the same dataset and metrics.
+- residual analysis for XGBoost
+- top-20 largest-error analysis
+- SHAP explainability
+- older-building robustness comparison
+- comparison between earlier and updated evaluation versions
 
 ---
 
-## 7. Results
+## 7. Final Results
 
-### Test Set Performance
+### Holdout Test Performance
+
+Latest updated holdout results:
 
 | Model | RMSE | MAE |
-|------|-----:|----:|
-| XGBoost | ~5.41 | ~3.66 |
-| LightGBM | ~5.42 | ~3.68 |
-| Decision Tree | ~5.87 | ~3.97 |
-| DummyRegressor | ~11.63 | ~8.81 |
+|---|---:|---:|
+| XGBoost | 5.30 | 3.57 |
+| LightGBM | 5.31 | 3.59 |
+| MLP | 5.69 | 3.89 |
+| Decision Tree | 5.80 | 3.91 |
+| DummyRegressor | 11.63 | 8.81 |
 
-### Cross-Validation (5-fold)
+### 10-Fold Cross-Validation
 
-- XGBoost: RMSE ≈ 5.42 (low variance)
-- LightGBM: RMSE ≈ 5.44
-- Decision Tree: RMSE ≈ 5.90
+| Model | RMSE Mean | RMSE Std | MAE Mean | MAE Std |
+|---|---:|---:|---:|---:|
+| XGBoost | 5.309 | 0.031 | 3.569 | 0.015 |
+| LightGBM | 5.325 | 0.038 | 3.601 | 0.019 |
+| MLP | 5.716 | 0.057 | 3.916 | 0.037 |
+| Decision Tree | 5.784 | 0.038 | 3.894 | 0.021 |
+| DummyRegressor | 11.645 | 0.082 | 8.801 | 0.038 |
 
-XGBoost consistently achieved the best performance, with LightGBM performing very closely behind.
+### Main Performance Conclusion
 
----
-
-## 8. Error Analysis
-
-Residual analysis was conducted for the best-performing model (XGBoost):
-
-- The mean residual is close to zero → **no strong overall bias**
-- The largest errors are significantly higher than average
-- Most extreme errors are **overpredictions**
-- Errors are more frequent for **older buildings**
-
-This indicates that while the model performs well overall, a subset of properties remains difficult to predict accurately.
+- **XGBoost remains the best model**
+- **LightGBM is extremely close behind**
+- **MLP improves over the symbolic Decision Tree in predictive accuracy**
+- **Decision Tree remains useful mainly for interpretability**
+- **DummyRegressor confirms that all learned models capture substantial predictive structure**
 
 ---
 
-## 9. Explainability & Feature Impact
+## 8. Iteration / What Changed in the Updated Version
 
-Model behavior was analyzed using:
+The latest version of the project includes an additional modeling iteration compared with the earlier evaluation snapshot.
 
-- Feature importance (tree-based models)
-- SHAP (SHapley Additive Explanations)
-- Residual plots
+Main changes:
 
-Key influential features include:
+- `construction_year_estimated` was kept in the final feature set alongside `feature_building_age`
+- models were retrained on the updated Phase 3 dataset
+- a dedicated **older-buildings analysis** was added
+- a new **MLP model** was introduced
+- downstream evaluation was rerun with updated outputs
+- a final **10-fold validation** was added
 
-- Insulation quality (walls and roof)
-- Glazing quality
-- Building age
-- Heating system characteristics
-- Floor area
+Result of the iteration:
 
-These results are consistent with domain knowledge and confirm that building envelope properties strongly influence energy performance.
-
----
-
-## 10. Interpretable Model (Decision Tree)
-
-The Decision Tree model provides human-readable decision rules. For example:
-
-- Buildings with **poor insulation and older construction age** tend to have higher predicted energy consumption
-- Buildings with **modern glazing and efficient heating systems** show significantly better energy performance
-
-Although less accurate than boosting models, the Decision Tree helps interpret the relationship between features and energy efficiency.
+- all main overlapping models improved slightly
+- XGBoost still ranked first
+- older-building robustness improved a little, but older buildings remain the hardest subgroup
 
 ---
 
-## 11. Repository Contents
+## 9. Error Analysis
 
-The repository contains:
+Residual analysis was performed for the best model, **XGBoost**.
 
-### Notebooks
-- `data_prep.ipynb`
-- `02_feature_engineering.ipynb`
-- `03_decision_tree.ipynb`
-- `04_non_symbolic.ipynb`
+Key findings:
 
-### Models
+- the mean residual is close to zero, indicating **little overall bias**
+- the largest errors are still much larger than the average error
+- most extreme errors remain **overpredictions**
+- older buildings are still more difficult to predict than newer buildings
+
+For the updated version, the XGBoost age-group breakdown shows that:
+
+- **Pre-1919** buildings are the hardest group
+- **2001+** buildings are the easiest group
+
+This suggests that historical housing stock remains more heterogeneous and less predictable, even after the feature update.
+
+---
+
+## 10. Explainability & Feature Impact
+
+Explainability was studied using:
+
+- tree-based feature importance
+- SHAP values
+- residual and subgroup error analysis
+
+Important features in the final updated version include:
+
+- `wall_insulation_none`
+- `roof_insulation_thickness_mm`
+- `construction_year_estimated`
+- `feature_building_age`
+- `win_glazing_high_perf`
+- heating-system variables
+- total floor area
+
+This confirms that **building envelope quality, age, and heating system characteristics** are central drivers of energy performance prediction.
+
+---
+
+## 11. Interpretable Model
+
+The Decision Tree serves as the project’s **symbolic / interpretable model**.
+
+It was used to:
+
+- visualize human-readable decision rules
+- inspect feature importance
+- compare an interpretable model against stronger non-symbolic models
+
+Although less accurate than XGBoost and LightGBM, it remains useful for explaining broad structural relationships in the data.
+
+---
+
+## 12. Repository Structure
+
+For final submission, the repository is organized so that notebooks, source data, trained models, and evaluation outputs are separated clearly.
+
+### Root
+
+Main items kept in the root directory:
+
+- notebooks
+  - `data_prep.ipynb`
+  - `02_feature_engineering.ipynb`
+  - `03_decision_tree.ipynb`
+  - `04_non_symbolic-v2.ipynb`
+- `README.md`
+- source datasets (`*.parquet`)
+- report folder if included separately
+
+### `models/`
+
+Trained model files are stored here, including:
+
 - `dt_best_model.pkl`
 - `xgb_best_model.pkl`
 - `lgb_best_model.pkl`
+- `mlp_best_model.pkl`
+- any additional saved model artifacts such as Random Forest if present
 
-### Evaluation Outputs
-- `predictions.parquet`
-- `evaluation_results.csv`
-- `cv_results.csv`
+### `evaluation_outputs/`
 
-### Explainability Outputs
-- SHAP plots and values
-- Feature importance plots
-- Residual analysis plots
-- Error analysis tables
+Generated evaluation outputs are stored here, including:
 
-### Data
-- Processed EPC datasets (parquet format)
-- Test split (`X_test`, `y_test`)
+- holdout prediction files
+- updated `_v2` evaluation files
+- `10fold` cross-validation files
+- old-vs-new comparison tables
+- SHAP outputs
+- residual plots
+- top-20 error analysis files
+- feature importance plots and summary tables
 
 ---
 
-## 12. Conclusion
+## 13. Conclusion
 
-This project demonstrates that machine learning models, particularly gradient-boosted tree methods, can predict building energy performance with strong accuracy using engineered EPC features.
+This project shows that machine learning models, especially **gradient-boosted tree methods**, can predict building energy performance with strong accuracy from engineered EPC features.
 
-The results highlight the importance of structural and thermal building characteristics such as insulation, glazing, age, and heating systems.
+The final updated evaluation confirms that:
 
-From a practical perspective, the model can support:
+- XGBoost is the strongest overall model
+- LightGBM is a very close second
+- the feature update improved performance slightly
+- older buildings remain the most difficult subgroup
+- age, insulation, glazing, and heating-system features are consistently the most influential predictors
 
-- Energy efficiency analysis
-- Retrofit prioritization
-- Policy-making decisions
-- Real-estate valuation insights
-
-Overall, the project successfully combines predictive performance with interpretability and real-world applicability.
+Overall, the project combines predictive performance, interpretability, robustness analysis, and practical relevance for energy-efficiency assessment and housing-policy applications.
