@@ -105,7 +105,7 @@ XGBoost and LightGBM finished almost tied, and that is mostly because they are b
  
 The MLP was the most disappointing for us. Even after tuning the layer sizes, activation, learning rate, and regularization, it could not catch up to the gradient boosting models. We did some reading on this and found that this is actually a known thing. On tabular datasets like ours, tree-based models tend to outperform neural networks pretty consistently \parencite{grinsztajn2022tree}. Neural networks usually show their strength on images, text, or audio, not on structured data like building characteristics.
  
-One thing worth mentioning is interpretability. The decision tree was easy to explain because you can read the rules directly from it. The non-symbolic models do not work like that. They are more of a black box. The feature importance plots help a bit, but in Phase 5 we plan to use SHAP on XGBoost so we can explain individual predictions instead of just looking at overall feature rankings.
+One thing worth mentioning is interpretability. The decision tree was easy to explain because you can read the rules directly from it. The non-symbolic models do not work like that. They are more of a black box. The feature importance plots help a bit, but in Evaluation we plan to use SHAP on XGBoost so we can explain individual predictions instead of just looking at overall feature rankings.
  
 \printbibliography
  
